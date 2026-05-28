@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Manim Theory | لغة الرياضيات المتحركة</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1235 50%, #0a0e27 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 50%);
+            animation: rotate 40s linear infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 80% 50%, rgba(255, 77, 158, 0.08) 0%, transparent 50%);
+            animation: rotate-reverse 35s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 229, 255, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-200px) translateX(100px); opacity: 0; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00e5ff, #ff4d9e, #ffd700, #00e5ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 5s ease infinite;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0,229,255,0.3);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #ccd6f6;
+            margin-bottom: 15px;
+        }
+
+        .hero .quote {
+            font-size: 1.1rem;
+            color: #8892b0;
+            font-style: italic;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            border-right: 3px solid #00e5ff;
+            background: rgba(0,229,255,0.05);
+            border-radius: 15px;
+        }
+
+        /* Book Showcase */
+        .book-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 50px 0;
+            background: rgba(10,14,39,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            border: 1px solid rgba(0,229,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .book-cover {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .book-icon {
+            font-size: 8rem;
+            background: linear-gradient(135deg, #00e5ff, #ff4d9e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .book-title-card {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .book-title-card h2 {
+            font-size: 1.5rem;
+            color: #00e5ff;
+        }
+
+        .book-meta {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .book-meta p {
+            margin: 5px 0;
+            font-size: 0.85rem;
+            color: #8892b0;
+        }
+
+        .pdf-viewer {
+            flex: 2;
+            min-width: 300px;
+            background: #1a1f3a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,229,255,0.3);
+        }
+
+        .pdf-toolbar {
+            background: #0f1235;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid rgba(0,229,255,0.2);
+        }
+
+        .pdf-toolbar span {
+            color: #00e5ff;
+            font-weight: 600;
+        }
+
+        .pdf-toolbar button {
+            background: rgba(0,229,255,0.1);
+            border: 1px solid rgba(0,229,255,0.3);
+            padding: 8px 16px;
+            border-radius: 25px;
+            color: #00e5ff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .pdf-toolbar button:hover {
+            background: #00e5ff;
+            color: #0a0e27;
+            transform: translateY(-2px);
+        }
+
+        .pdf-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .feature-card {
+            background: rgba(15,18,53,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: center;
+            border: 1px solid rgba(0,229,255,0.15);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00e5ff;
+            box-shadow: 0 20px 40px rgba(0,229,255,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #00e5ff;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .feature-card p {
+            color: #8892b0;
+            line-height: 1.7;
+        }
+
+        /* Installation Guide */
+        .install-section {
+            background: rgba(10,14,39,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            margin: 50px 0;
+            border: 1px solid rgba(0,229,255,0.2);
+        }
+
+        .install-section h2 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .code-block {
+            background: #0a0e1e;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: #00e5ff;
+            border: 1px solid rgba(0,229,255,0.2);
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(0,229,255,0.1);
+            margin-top: 50px;
+        }
+
+        .footer .isbn {
+            color: #8892b0;
+            font-size: 0.85rem;
+            margin: 10px 0;
+        }
+
+        .footer .copyright {
+            color: #5a6a8a;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero .subtitle {
+                font-size: 1rem;
+            }
+            .pdf-iframe {
+                height: 400px;
+            }
+            .book-container {
+                padding: 20px;
+            }
+        }
+
+        /* Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #0f1235;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #00e5ff;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            background: #1a1f3a;
+            border: 1px solid #00e5ff;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .modal-content button {
+            background: #00e5ff;
+            color: #0a0e27;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Manim Theory</h1>
+            <div class="subtitle">The Language of Animated Math</div>
+            <div class="subtitle" style="font-size: 1.2rem; color: #ff4d9e;">لغة الرياضيات المتحركة بالبايثون</div>
+            <div class="quote">
+                <i class="fas fa-quote-right"></i> الرسوم بالكلمات، والحركة بالبيان
+            </div>
+        </div>
+
+        <!-- Book Container -->
+        <div class="book-container">
+            <div class="book-cover">
+                <div class="book-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-title-card">
+                    <h2>Manim Theory</h2>
+                    <p>لغة الرياضيات المتحركة</p>
+                </div>
+                <div class="book-meta">
+                    <p><i class="fas fa-user"></i> بن الدين بويعقوب</p>
+                    <p><i class="fas fa-isbn"></i> ISBN: 978-9969-11-021-0</p>
+                    <p><i class="fas fa-calendar"></i> الإيداع القانوني: أكتوبر 2025</p>
+                    <p><i class="fas fa-building"></i> دار أحلام للنشر</p>
+                </div>
+            </div>
+            <div class="pdf-viewer">
+                <div class="pdf-toolbar">
+                    <span><i class="fas fa-lock"></i> كتاب محمي بكلمة سر</span>
+                    <div>
+                        <button id="fullscreenBtn"><i class="fas fa-expand"></i> ملء الشاشة</button>
+                        <button id="downloadBtn"><i class="fas fa-download"></i> تحميل</button>
+                    </div>
+                </div>
+                <iframe id="pdfFrame" class="pdf-iframe" src=""></iframe>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3>للمبتدئين</h3>
+                <p>ابدأ من الصفر وشاهد كل كود يتحول إلى مشهد متحرك أمام عينيك.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                <h3>للمتقدمين</h3>
+                <p>افترز مباشرة إلى تخصصك وصمم مسارك التعليمي الخاص.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-university"></i></div>
+                <h3>للأكاديميين والمعلمين</h3>
+                <p>حولوا المفاهيم المجردة إلى عروض بصرية تخطف الأنفاس.</p>
+            </div>
+        </div>
+
+        <!-- Installation Guide -->
+        <div class="install-section">
+            <h2><i class="fab fa-windows"></i> دليل تثبيت Manim CE على Windows</h2>
+            <div class="code-block">
+                <pre>
+# 1. فتح موجه الأوامر (CMD) أو PowerShell
+# 2. إنشاء مجلد للمشروع
+mkdir manim-project
+cd manim-project
+
+# 3. إنشاء بيئة افتراضية
+python -m venv venv
+
+# 4. تفعيل البيئة الافتراضية
+venv\Scripts\activate
+
+# 5. ترقية pip
+pip install --upgrade pip
+
+# 6. تثبيت Manim
+pip install manim
+
+# 7. تثبيت الحزم الإضافية
+pip install numpy scipy matplotlib ipython
+
+# 8. (اختياري) تثبيت إصدار التطوير
+pip install "manim[dev]"
+
+# 9. التحقق من التثبيت
+manim --version
+
+# 10. اختبار التثبيت بمثال بسيط
+manim -pql example.py SquareToCircle
+                </pre>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="isbn">
+                <i class="fas fa-isbn"></i> ISBN: 978-9969-11-021-0 | 
+                <i class="fas fa-calendar-alt"></i> الإيداع القانوني: أكتوبر 2025
+            </div>
+            <div class="isbn">
+                <i class="fas fa-envelope"></i> editionahlem@gmail.com |
+                <i class="fas fa-phone"></i> 0794813011 / 0698370013
+            </div>
+            <div class="copyright">
+                © 2025 دار أحلام للنشر والتوزيع والطباعة. جميع الحقوق محفوظة.
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-lock" style="font-size: 3rem; color: #00e5ff;"></i>
+            <h3 style="margin: 15px 0;">كتاب محمي</h3>
+            <p>هذا الكتاب محمي بكلمة مرور</p>
+            <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور">
+            <button id="unlockBtn">فتح الكتاب</button>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #8892b0;">للحصول على كلمة المرور، يرجى التواصل مع الناشر</p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 4 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = 15 + Math.random() * 15 + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // PDF Password Protection
+        const correctPassword = "manim2025";
+        let isUnlocked = false;
+        const pdfFrame = document.getElementById('pdfFrame');
+        const modal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+
+        function loadPDF() {
+            const pdfPath = "The_Language_of_Animated_Math_protected.pdf";
+            pdfFrame.src = pdfPath;
+        }
+
+        function showModal() {
+            modal.style.display = 'flex';
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+        }
+
+        function unlockPDF() {
+            const enteredPassword = passwordInput.value;
+            if (enteredPassword === correctPassword) {
+                isUnlocked = true;
+                hideModal();
+                loadPDF();
+            } else {
+                alert('❌ كلمة المرور غير صحيحة');
+                passwordInput.value = '';
+            }
+        }
+
+        // Check if PDF exists and requires password
+        // For demo, we show modal first
+        showModal();
+
+        unlockBtn.addEventListener('click', unlockPDF);
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                unlockPDF();
+            }
+        });
+
+        // Fullscreen functionality
+        document.getElementById('fullscreenBtn').addEventListener('click', function() {
+            const viewer = document.querySelector('.pdf-viewer');
+            if (viewer.requestFullscreen) {
+                viewer.requestFullscreen();
+            } else if (viewer.webkitRequestFullscreen) {
+                viewer.webkitRequestFullscreen();
+            } else if (viewer.msRequestFullscreen) {
+                viewer.msRequestFullscreen();
+            }
+        });
+
+        // Download button
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            if (isUnlocked) {
+                const link = document.createElement('a');
+                link.href = "The_Language_of_Animated_Math_protected.pdf";
+                link.download = "The_Language_of_Animated_Math_protected.pdf";
+                link.click();
+            } else {
+                alert('🔒 يرجى فتح الكتاب أولاً بكلمة المرور');
+                showModal();
+            }
+        });
+
+        // Add floating effect to feature cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
