@@ -154,6 +154,11 @@
             display: block;
         }
 
+        /* إخفاء شريط الأدوات العلوي في PDF (طباعة وتسجيل) */
+        .pdf-iframe::-webkit-scrollbar {
+            width: 8px;
+        }
+
         /* Features Section - صغير */
         .features {
             display: grid;
@@ -316,7 +321,7 @@
             padding: 10px 25px;
             border-radius: 30px;
             cursor: pointer;
-            font-weight: bold;
+            weight: bold;
             font-family: 'Cairo', sans-serif;
             font-size: 0.9rem;
             transition: all 0.3s;
@@ -325,6 +330,13 @@
         .modal-content button:hover {
             background: #ffd700;
             transform: scale(1.02);
+        }
+
+        /* إخفاء أزرار الطباعة والحفظ من قارئ PDF باستخدام CSS */
+        @media print {
+            .hero, .features, .install-section, .footer, .modal {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -449,7 +461,8 @@ manim -pql example.py SquareToCircle
         const unlockBtn = document.getElementById('unlockBtn');
 
         function loadPDF() {
-            pdfFrame.src = "The_Language_of_Animated_Math_protected.pdf";
+            // إضافة المعامل #toolbar=0 و #navpanes=0 لإخفاء أزرار الطباعة والتسجيل
+            pdfFrame.src = "The_Language_of_Animated_Math_protected.pdf#toolbar=0&navpanes=0&scrollbar=0";
         }
 
         function hideModal() {
@@ -479,6 +492,34 @@ manim -pql example.py SquareToCircle
             if (e.key === 'Enter') {
                 unlockPDF();
             }
+        });
+
+        // منع اختصار الطباعة Ctrl+P و Ctrl+S وزر F12
+        document.addEventListener('keydown', function(e) {
+            // منع Ctrl+P (طباعة)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+                e.preventDefault();
+                alert('❌ الطباعة محظورة لحماية حقوق النشر');
+                return false;
+            }
+            // منع Ctrl+S (حفظ)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                alert('❌ الحفظ محظور لحماية حقوق النشر');
+                return false;
+            }
+            // منع F12 (أدوات المطور)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                alert('❌ أدوات المطور معطلة لحماية المحتوى');
+                return false;
+            }
+        });
+
+        // منع النقر بزر الماوس الأيمن
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
         });
 
         // Smooth fade-in for feature cards
